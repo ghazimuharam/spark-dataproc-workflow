@@ -30,11 +30,8 @@ def main(args):
     sc = SparkContext()
     spark = SQLContext(sc)
 
-    # flights_data = spark.read.json(
-    #     BUCKET_NAME + '/Sources/' + base_time.strftime("%Y-%m-%d") + '.json')
-
     flights_data = spark.read.json(
-        './Sources/' + base_time.strftime("%Y-%m-%d") + '.json')
+        BUCKET_NAME + '/Sources/' + base_time.strftime("%Y-%m-%d") + '.json')
 
     flights_data = flights_data.drop("flight_date")
     flights_data = flights_data.withColumn(
@@ -91,22 +88,16 @@ def main(args):
         """
     )
 
-    # output_flight_nums = BUCKET_NAME + "/flights_data_output/" + \
-    #     base_time.strftime("%Y-%m-%d")+"_flight_nums"
+    output_flight_nums = BUCKET_NAME + "/flights_data_output/" + \
+        base_time.strftime("%Y-%m-%d")+"_flight_nums"
 
-    # output_distance_category = BUCKET_NAME + "/flights_data_output/" + \
-    #     base_time.strftime("%Y-%m-%d")+"_distance_category"
-
-    output_flight_nums = "./flights_data_output/" + \
-        base_time.strftime("%Y-%m-%d")+"_flight_nums.avro"
-
-    output_distance_category = "./flights_data_output/" + \
-        base_time.strftime("%Y-%m-%d")+"_distance_category.avro"
+    output_distance_category = BUCKET_NAME + "/flights_data_output/" + \
+        base_time.strftime("%Y-%m-%d")+"_distance_category"
 
     avg_delays_by_flight_nums.coalesce(
-        1).write.format("avro").save(output_flight_nums)
+        1).write.format("json").save(output_flight_nums)
     avg_delays_by_distance_category.coalesce(
-        1).write.format("avro").save(output_distance_category)
+        1).write.format("json").save(output_distance_category)
 
 
 if __name__ == "__main__":
